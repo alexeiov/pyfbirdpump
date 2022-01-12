@@ -1,6 +1,6 @@
 import fdb
-import openpyxl as opx
 import time
+import xlsx_import
 
 import config
 
@@ -16,11 +16,7 @@ def db_connect():
 c = db_connect()
 cur = c.cursor()
 
-inputData = []
-wb = opx.load_workbook(filename=config.datasource)
-sheet = wb.worksheets[0]
-
-print('xlsx data read completed\n')
+sheet = xlsx_import.sheet
 
 row_num = sheet.max_row
 col_num = sheet.max_column
