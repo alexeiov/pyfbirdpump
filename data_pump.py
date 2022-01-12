@@ -6,6 +6,7 @@ import config
 
 startTime = time.time()
 
+
 def db_connect():
     con = fdb.connect(dsn=config.address, user=config.username, password=config.passwd,
                       charset='win1251')
@@ -87,7 +88,7 @@ for row in data_l:
 
 c.commit()
 c.close()
-print(f'data pump completed, execution tine: {time.time() - startTime} seconds')
+print(f'data pump completed, execution time: {time.time() - startTime} seconds')
 
 # r = cur.fetchall()
 # for s in r:
