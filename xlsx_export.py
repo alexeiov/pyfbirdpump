@@ -83,6 +83,9 @@ def save_results_to_xlsx(save_p, *res_sets): # Todo accept any number of sheets,
     P_EURO_CURRENT = 'S'
     P_USD_PREV = 'P'
     P_USD_CURRENT = 'R'
+    P_GBV = 'F'
+    P_PURCHASE_RATE = 'W'
+    P_GBV_PREV = 'X'
 
     CRN_CALC_C_NUM = 21
 
@@ -108,7 +111,7 @@ def save_results_to_xlsx(save_p, *res_sets): # Todo accept any number of sheets,
     # coeffs = res_sets[4][1]
     # trends = res_sets[5][1]
 
-    for num, data in enumerate(zip(res_sets[:int(len(res_sets)/2)],res_sets[int(len(res_sets)/2):])):
+    for num, data in enumerate(zip(res_sets[:int(len(res_sets)/2)], res_sets[int(len(res_sets)/2):])):
 
         for n_num, name in enumerate(data[0]):
             wb.worksheets[num].cell(1, n_num + 1).value = name
@@ -117,19 +120,32 @@ def save_results_to_xlsx(save_p, *res_sets): # Todo accept any number of sheets,
             if not num:
                 for cell_num, cell in enumerate(row):
                     wb.worksheets[num].cell(r_num + 2, cell_num + 1).value = cell
-                    if row[2] in ('0', '1', '2', '3') and row[14][:10] == 'index_prev':
-                        wb.worksheets[num].cell(r_num + 2,
-                                              CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} / {P_IDC_COEFF_PREV}{r_num + 2} * {P_IDC_COEFF}{r_num + 2} * {P_TREND_COEFF}{r_num + 2}'
-                    elif row[2] not in ('0', '1', '2', '3', 'CIP') and row[14][:2] == 'ru':
-                        wb.worksheets[num].cell(r_num + 2,
-                                              CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} / {P_IDC_COEFF_PREV}{r_num + 2} / {P_DIRECT_COEFF_PREV}{r_num + 2} / {P_INDIRECT_COEFF_PREV}{r_num + 2} * {P_IDC_COEFF}{r_num + 2} * {P_TREND_COEFF}{r_num + 2} * {P_INDIRECT_COEFF}{r_num + 2} * {P_DIRECT_COEFF}{r_num + 2}'
-                    elif row[2] not in ('0', '1', '2', '3', 'CIP') and (row[14][:2] == 'eu' or row[14] == 'auto_imp') and \
-                            row[1][:5] != 'Tirus':
-                        pass
-                    elif row[2] not in ('0', '1', '2', '3', 'CIP') and row[14] in ('us_tool', 'jap_tool', 'china') and row[
-                                                                                                                           1][
-                                                                                                                       :5] != 'Tirus':
-                        pass
+                    # CRN_PREV indexation
+                    if row[21] == 'index_prev':
+                        if row[2] in ('0', '1', '2', '3') and (row[14][:10] == 'index_prev' or row[14] == 'index_mv'): #RE
+                            wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} / {P_IDC_COEFF_PREV}{r_num + 2} * {P_IDC_COEFF}{r_num + 2} * {P_TREND_COEFF}{r_num + 2}'
+                        elif row[2] not in ('0', '1', '2', '3', 'CIP') and (row[14][:2] == 'ru' or row[14] == 'auto_ru' or row[1][:5] == 'Tirus'): # costs in national currencies (ru and Tiruses)
+                            wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} / {P_IDC_COEFF_PREV}{r_num + 2} / {P_DIRECT_COEFF_PREV}{r_num + 2} / {P_INDIRECT_COEFF_PREV}{r_num + 2} * {P_IDC_COEFF}{r_num + 2} * {P_TREND_COEFF}{r_num + 2} * {P_INDIRECT_COEFF}{r_num + 2} * {P_DIRECT_COEFF}{r_num + 2}'
+                        elif row[2] not in ('0', '1', '2', '3', 'CIP') and (row[14][:2] == 'eu' or row[14] == 'auto_imp') and row[1][:5] != 'Tirus': #rus - Euro
+                            wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} / {P_EURO_PREV}{r_num + 2} /{P_IDC_COEFF_PREV}{r_num + 2} / {P_DIRECT_COEFF_PREV}{r_num + 2} / {P_INDIRECT_COEFF_PREV}{r_num + 2} * {P_EURO_CURRENT}{r_num + 2} * {P_IDC_COEFF}{r_num + 2} * {P_TREND_COEFF}{r_num + 2} * {P_INDIRECT_COEFF}{r_num + 2} * {P_DIRECT_COEFF}{r_num + 2}'
+                        elif row[2] not in ('0', '1', '2', '3', 'CIP') and row[14] in ('us_tool', 'jap_tool', 'china') and row[1][:5] != 'Tirus': #rus - USD
+                            wb.worksheets[num].cell(r_num + 2,
+                                                    CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} / {P_USD_PREV}{r_num + 2} /{P_IDC_COEFF_PREV}{r_num + 2} / {P_DIRECT_COEFF_PREV}{r_num + 2} / {P_INDIRECT_COEFF_PREV}{r_num + 2} * {P_USD_CURRENT}{r_num + 2} * {P_IDC_COEFF}{r_num + 2} * {P_TREND_COEFF}{r_num + 2} * {P_INDIRECT_COEFF}{r_num + 2} * {P_DIRECT_COEFF}{r_num + 2}'
+                        elif row[2] == 'CIP':  # CIP
+                            if row[5] > 0 and row[23] >= 0:
+                                wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} * {P_TREND_COEFF}{r_num + 2} * {P_GBV}{r_num + 2} / {P_GBV_PREV}{r_num + 2}'
+                            else:
+                                wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} * {P_TREND_COEFF}{r_num + 2}'
+
+                    # GBV indexation
+                    elif row[21] == 'index_gbv':
+                        if row[2] in ('0', '1', '2', '3', 'CIP'):
+                            wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_GBV}{r_num + 2}  * {P_TREND_COEFF}{r_num + 2}'
+                        elif row[2] not in ('0', '1', '2', '3', 'CIP'):
+                            if row[14] in ('ru', 'auto_ru') or row[14] in ('Tirus_US', 'Tirus_UK', 'Tirus_GMBH'):
+                                wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_GBV}{r_num + 2}  * {P_TREND_COEFF}{r_num + 2}'
+                            elif row[14] in ('euro_me', 'eu', 'auto_imp'):
+                                wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_GBV}{r_num + 2}  / {P_PURCHASE_RATE}{r_num + 2} * {P_TREND_COEFF}{r_num + 2} * {P_EURO_CURRENT}{r_num + 2}'
             else:
                 for cell_num, cell in enumerate(row):
                     wb.worksheets[num].cell(r_num + 2, cell_num + 1).value = cell
@@ -176,7 +192,8 @@ def sv_round(num):
 n_d = get_names("select RDB$parameter_name from rdb$procedure_parameters where rdb$procedure_name = 'CALC_EXAMPLE' order by rdb$parameter_number")
 n_c = get_names("select rdb$field_name from rdb$relation_fields where rdb$relation_name = 'TREND_COEFFS' order by RDB$FIELD_POSITION")
 n_t = get_names("select rdb$field_name from rdb$relation_fields where rdb$relation_name = 'COEFFS_GBV' order by RDB$FIELD_POSITION")
-d = get_data("select * from calc_example('VSMPO') rows 7000")
+# d = get_data("select * from calc_example('VSMPO') rows 7000")
+d = get_data("select * from calc_example")
 c = get_data("select * from TREND_COEFFS")
 e = get_data("select * from COEFFS_GBV")
 save_results_to_xlsx(full_save_path, *(n_d, n_c, n_t, d, c, e,))
