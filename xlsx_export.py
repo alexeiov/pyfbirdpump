@@ -122,7 +122,7 @@ def save_results_to_xlsx(save_p, *res_sets): # Todo accept any number of sheets,
                     wb.worksheets[num].cell(r_num + 2, cell_num + 1).value = cell
                     # CRN_PREV indexation
                     if row[21] == 'index_prev':
-                        if row[2] in ('0', '1', '2', '3') and (row[14][:10] == 'index_prev' or row[14] == 'index_mv'): #RE
+                        if row[2] in ('0', '1', '2', '3') and (row[14][:10] == 'index_prev' or row[14] == 'index_mv' or row[14] == 'Tirus_US_re' or row[14] == 'Tirus_GMBH_re'): #RE
                             wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} / {P_IDC_COEFF_PREV}{r_num + 2} * {P_IDC_COEFF}{r_num + 2} * {P_TREND_COEFF}{r_num + 2}'
                         elif row[2] not in ('0', '1', '2', '3', 'CIP') and (row[14][:2] == 'ru' or row[14] == 'auto_ru' or row[1][:5] == 'Tirus'): # costs in national currencies (ru and Tiruses)
                             wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} / {P_IDC_COEFF_PREV}{r_num + 2} / {P_DIRECT_COEFF_PREV}{r_num + 2} / {P_INDIRECT_COEFF_PREV}{r_num + 2} * {P_IDC_COEFF}{r_num + 2} * {P_TREND_COEFF}{r_num + 2} * {P_INDIRECT_COEFF}{r_num + 2} * {P_DIRECT_COEFF}{r_num + 2}'
