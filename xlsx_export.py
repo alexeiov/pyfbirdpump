@@ -132,7 +132,7 @@ def save_results_to_xlsx(save_p, *res_sets): # Todo accept any number of sheets,
                             wb.worksheets[num].cell(r_num + 2,
                                                     CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} / {P_USD_PREV}{r_num + 2} /{P_IDC_COEFF_PREV}{r_num + 2} / {P_DIRECT_COEFF_PREV}{r_num + 2} / {P_INDIRECT_COEFF_PREV}{r_num + 2} * {P_USD_CURRENT}{r_num + 2} * {P_IDC_COEFF}{r_num + 2} * {P_TREND_COEFF}{r_num + 2} * {P_INDIRECT_COEFF}{r_num + 2} * {P_DIRECT_COEFF}{r_num + 2}'
                         elif row[2] == 'CIP':  # CIP
-                            if row[5] > 0 and row[23] >= 0:
+                            if row[5] >= 0 and row[23] > 0:
                                 wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} * {P_TREND_COEFF}{r_num + 2} * {P_GBV}{r_num + 2} / {P_GBV_PREV}{r_num + 2}'
                             else:
                                 wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} * {P_TREND_COEFF}{r_num + 2}'
