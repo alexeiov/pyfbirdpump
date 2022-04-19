@@ -8,13 +8,14 @@ def get_blob():
 
     c = db_connect()
     cur = c.cursor()
-    cur.execute(config.blob_get)
-    data_f = cur.fetchall()
+    cur.execute(config.blob_get_photo)
+    data_f = cur.fetchone()
+    pic = data_f[0].read()
+    pic_name = f'{data_f[1]}.jpg'
 
-    for d in data_f:
-        with open('from_blob.txt', 'w', encoding='utf8') as d_f:
-            d_f.writelines(d)
-        # print(d)
+    with open(pic_name, 'wb') as d_f:
+        d_f.write(pic)
+    # print(d)
         # print('test')
 
     c.commit()
