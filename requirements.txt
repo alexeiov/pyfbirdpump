@@ -1,3 +1,4 @@
 fdb
 openpyxl
 psycopg2
+PyPDF2
