@@ -1,17 +1,18 @@
 import openpyxl as opx
 import config
-from pathlib import Path
+from file_path_getter import get_path
 
 
 class XlsxImport:
     pass
 
 
-open_path = input('Enter path to file:')
-"""File should be in xlsx format"""
-file_to_process = input('Enter filename:')
-full_data_path = Path(open_path).joinpath(file_to_process)
+# open_path = input('Enter path to file:')
+# """File should be in xlsx format"""
+# file_to_process = input('Enter filename:')
+# full_data_path = Path(open_path).joinpath(file_to_process)
 
+full_data_path = get_path()
 
 def get_xlsx_data(data_path=full_data_path, data_workbook_num=config.wb_num):
     wb = opx.load_workbook(data_path)
