@@ -5,13 +5,14 @@ from pathlib import Path
 
 
 class PhotoExists(Exception):
+    """This exception is raised when photo for given item already uploaded into db"""
     pass
 
 
 def set_blob():
     try:
         start_time = time.time()
-        open_path = input('Enter path to file:')
+        open_path = input('Enter path to photo file:')
         photo_to_add_main = input('Enter general view photo filename:')
         photo_to_add_plate = input('Enter plate photo filename:')
 
@@ -46,13 +47,26 @@ def set_blob():
 
         c = db_connect()
         cur = c.cursor()
+        get_item_data = cur.prep(config.data_get_item_data)
+        cur.execute(get_item_data, (id_mt,))
+        item_data = cur.fetchone()
+        c.commit()
+        c.close()
+
+        c = db_connect()
+        cur = c.cursor()
 
         if not check_blob:
             if trans_type == 1:
-                inv = input('Enter inventory number:')
-                subdiv_name = input('Enter subdiv_name:')
-                os_name = input('Enter asset name:')
-                aar_gr = input('Enter asset group:')
+                # inv = input('Enter inventory number:')
+                # subdiv_name = input('Enter subdiv_name:')
+                # os_name = input('Enter asset name:')
+                # aar_gr = input('Enter asset group:')
+                inv = item_data[0]
+                subdiv_name = item_data[1]
+                os_name = item_data[2]
+                aar_gr = item_data[3]
+
                 tech_pos = input('Enter technical position index: ')
                 blob_statement = cur.prep(config.blob_set_photo)
                 cur.execute(blob_statement, (inv, id_mt, aar_gr, os_name, subdiv_name, main_ph, plate_ph, tech_pos,))
