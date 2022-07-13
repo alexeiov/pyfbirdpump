@@ -9,7 +9,7 @@ class PhotoExists(Exception):
     pass
 
 
-def set_blob():
+def set_blob(db):
     try:
         start_time = time.time()
         open_path = input('Enter path to photo file:')
@@ -35,7 +35,7 @@ def set_blob():
 
         id_mt = int(input('Enter Main Tab ID:'))
 
-        c = db_connect()
+        c = db_connect(db)
         cur = c.cursor()
         st_check_blob = cur.prep(config.data_get_check_blob)
         cur.execute(st_check_blob, (id_mt,))
@@ -45,7 +45,7 @@ def set_blob():
         c.commit()
         c.close()
 
-        c = db_connect()
+        c = db_connect(db)
         cur = c.cursor()
         get_item_data = cur.prep(config.data_get_item_data)
         cur.execute(get_item_data, (id_mt,))
@@ -53,7 +53,7 @@ def set_blob():
         c.commit()
         c.close()
 
-        c = db_connect()
+        c = db_connect(db)
         cur = c.cursor()
 
         if not check_blob:
@@ -83,4 +83,4 @@ def set_blob():
         print('This item already has a photo')
 
 
-set_blob()
+set_blob(config.db_addresses['azot'])

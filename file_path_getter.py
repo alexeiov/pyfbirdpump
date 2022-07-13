@@ -8,5 +8,6 @@ def get_path():
     full_data_path = Path(open_path).joinpath(file_to_process)
     return full_data_path
 
+
 if __name__ == "__main__":
     get_path()
