@@ -16,6 +16,8 @@ headers = {'User-Agent': user_agent, }
 """
 Функция для импорта ежедневных данных об обменном курсе с сайта ЦБР
 """
+
+
 def get_av_rub_rates(curr, start_date, finish_date):
     url = f"http://www.cbr.ru/scripts/XML_dynamic.asp?date_req1={start_date}&date_req2={finish_date}&VAL_NM_RQ={curr}"
     r = requests.get(url=url, headers=headers)
@@ -65,6 +67,6 @@ def get_jap_tools():
     pass
 
 
-rates = get_av_rub_rates('R01235', '01/01/2022', '31/05/2022')
+# rates = get_av_rub_rates('R01235', '01/01/2022', '31/05/2022')
 # print(rates[0])
-print(rates)
+# print(rates)
