@@ -5,11 +5,13 @@ from connection import db_connect
 import datetime
 import re
 
-db_name = config.address[-17:-4]
+db_name = config.db_addresses['kva_6'][-21:-4]
 # base_filename = '5856_VSMPO_calculation_example_'
 exported_filename = db_name + '_calculation_example_' + datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S') + '.xlsx' #Todo Get DB name from db
 save_path = input('Please insert save path: ')
 full_save_path = Path(save_path).joinpath(exported_filename)
+
+db = config.db_addresses['kva_6']
 
 
 def get_names(req):
@@ -17,7 +19,7 @@ def get_names(req):
     procedure_field_names = req
     sheet_name = get_table_name(req)
     proc_names = []
-    c = db_connect()
+    c = db_connect(db)
     cur = c.cursor()
     cur.execute(procedure_field_names)
     names = cur.fetchall()
@@ -32,7 +34,7 @@ def get_data(req):
     data_get_example = req
     data = []
     sheet_name = get_table_name(req)
-    c = db_connect()
+    c = db_connect(db)
     cur = c.cursor()
     cur.execute(data_get_example)
     print('Export is in progress')
@@ -122,7 +124,7 @@ def save_results_to_xlsx(save_p, *res_sets): # Todo accept any number of sheets,
                     wb.worksheets[num].cell(r_num + 2, cell_num + 1).value = cell
                     # CRN_PREV indexation
                     if row[21] == 'index_prev':
-                        if row[2] in ('0', '1', '2', '3') and (row[14][:10] == 'index_prev' or row[14] == 'index_mv' or row[14] == 'Tirus_US_re' or row[14] == 'Tirus_GMBH_re'): #RE
+                        if row[2] in ('0', '1', '2', '3') and (row[14] == 're_ind' or row[14] == 're_m' or row[14] == 'Tirus_US_re' or row[14] == 'Tirus_GMBH_re' or row[14 == 're_apart']): #RE
                             wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} / {P_IDC_COEFF_PREV}{r_num + 2} * {P_IDC_COEFF}{r_num + 2} * {P_TREND_COEFF}{r_num + 2}'
                         elif row[2] not in ('0', '1', '2', '3', 'CIP') and (row[14][:2] == 'ru' or row[14] == 'auto_ru' or row[1][:5] == 'Tirus'): # costs in national currencies (ru and Tiruses)
                             wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} / {P_IDC_COEFF_PREV}{r_num + 2} / {P_DIRECT_COEFF_PREV}{r_num + 2} / {P_INDIRECT_COEFF_PREV}{r_num + 2} * {P_IDC_COEFF}{r_num + 2} * {P_TREND_COEFF}{r_num + 2} * {P_INDIRECT_COEFF}{r_num + 2} * {P_DIRECT_COEFF}{r_num + 2}'
@@ -132,8 +134,9 @@ def save_results_to_xlsx(save_p, *res_sets): # Todo accept any number of sheets,
                             wb.worksheets[num].cell(r_num + 2,
                                                     CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} / {P_USD_PREV}{r_num + 2} /{P_IDC_COEFF_PREV}{r_num + 2} / {P_DIRECT_COEFF_PREV}{r_num + 2} / {P_INDIRECT_COEFF_PREV}{r_num + 2} * {P_USD_CURRENT}{r_num + 2} * {P_IDC_COEFF}{r_num + 2} * {P_TREND_COEFF}{r_num + 2} * {P_INDIRECT_COEFF}{r_num + 2} * {P_DIRECT_COEFF}{r_num + 2}'
                         elif row[2] == 'CIP':  # CIP
-                            if row[5] >= 0 and row[23] > 0:
-                                wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} * {P_TREND_COEFF}{r_num + 2} * {P_GBV}{r_num + 2} / {P_GBV_PREV}{r_num + 2}'
+                            if row[5] is not None: #If no GBV is provided
+                                if row[5] >= 0 and row[23] > 0:
+                                    wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} * {P_TREND_COEFF}{r_num + 2} * {P_GBV}{r_num + 2} / {P_GBV_PREV}{r_num + 2}'
                             else:
                                 wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} * {P_TREND_COEFF}{r_num + 2}'
 

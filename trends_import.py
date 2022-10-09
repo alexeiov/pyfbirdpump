@@ -1,10 +1,12 @@
 import csv
+import json
 
 import requests
 from selenium import webdriver
 import time
 from selenium.webdriver.common.keys import Keys
 import xmltodict
+import config
 
 # browser = webdriver.Firefox(executable_path=r'T:\\YandexDisk\\Wrk\\Общая информация\\Справочная информация\\ИТ в оценке\\pyfbirdpump\\venv\\Scripts\\geckodriver.exe')
 # browser.get('https://ovsiannikov.net')
@@ -13,12 +15,11 @@ import xmltodict
 user_agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'
 headers = {'User-Agent': user_agent, }
 
-"""
-Функция для импорта ежедневных данных об обменном курсе с сайта ЦБР
-"""
-
 
 def get_av_rub_rates(curr, start_date, finish_date):
+    """
+    Функция для импорта ежедневных данных об обменном курсе с сайта ЦБР и расчёта среднемесячных значений
+    """
     url = f"http://www.cbr.ru/scripts/XML_dynamic.asp?date_req1={start_date}&date_req2={finish_date}&VAL_NM_RQ={curr}"
     r = requests.get(url=url, headers=headers)
     rates = xmltodict.parse(r.text)['ValCurs']['Record']
@@ -59,8 +60,18 @@ def get_eurostat_me():
     pass
 
 
-def get_ble_trends():
-    pass
+def get_us_fred_trends(api_key, ser_id, start_date, end_date):
+    """
+    Функция для импорта индексов цен производителей промышленного оборудования и промышленных зданий в США
+    Документация: https://fred.stlouisfed.org/docs/api/fred/, https://fred.stlouisfed.org/docs/api/fred/category_series.html
+    https://fred.stlouisfed.org/docs/api/fred/series.html, https://fred.stlouisfed.org/docs/api/fred/series_observations.html
+    """
+
+    # url_s = f"https://api.stlouisfed.org/fred/series?series_id={ser_id}&api_key={api_key}&realtime_start={start_date}&realtime_end={end_date}&file_type=json"
+    url_d = f"https://api.stlouisfed.org/fred/series/observations?series_id={ser_id}&api_key={api_key}&observation_start={start_date}&observation_end={end_date}&file_type=json"
+    # url = f"https://api.stlouisfed.org/fred/category/series?category_id=125&api_key=={api_key}&realtime_start={start_date}&realtime_end={end_date}&file_type=json"
+    r = requests.get(url=url_d, headers=headers)
+    return json.loads(r.text)
 
 
 def get_jap_tools():
@@ -70,3 +81,12 @@ def get_jap_tools():
 # rates = get_av_rub_rates('R01235', '01/01/2022', '31/05/2022')
 # print(rates[0])
 # print(rates)
+res = get_us_fred_trends(config.fred_api_key, config.fred_series_id['ind_bld'], "2022-01-01", "2022-06-30")
+with open('us_re_trends 6m.csv', 'w', newline='') as tr_f:
+    writer = csv.writer(tr_f, delimiter=';')
+    writer.writerow(('Date', 'Index'))
+    for d in res['observations']:
+        print(d['date'], d['value'])
+        # tr_f.write(d['date'] + ';' + d['value'])
+        writer.writerow((d['date'], d['value']))
+
