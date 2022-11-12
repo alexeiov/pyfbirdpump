@@ -78,15 +78,19 @@ def get_jap_tools():
     pass
 
 
-# rates = get_av_rub_rates('R01235', '01/01/2022', '31/05/2022')
+rates = get_av_rub_rates('R01235', '01/01/2022', '30/09/2022')
 # print(rates[0])
 # print(rates)
-res = get_us_fred_trends(config.fred_api_key, config.fred_series_id['ind_bld'], "2022-01-01", "2022-06-30")
-with open('us_re_trends 6m.csv', 'w', newline='') as tr_f:
-    writer = csv.writer(tr_f, delimiter=';')
-    writer.writerow(('Date', 'Index'))
-    for d in res['observations']:
-        print(d['date'], d['value'])
-        # tr_f.write(d['date'] + ';' + d['value'])
-        writer.writerow((d['date'], d['value']))
+with open('rates_for_avisma.csv', 'w') as rates_file:
+    for date, rate in rates.items():
+        rates_file.write(f'{date};{rate}\n')
+
+# res = get_us_fred_trends(config.fred_api_key, config.fred_series_id['ind_bld'], "2022-01-01", "2022-06-30")
+# with open('us_re_trends 6m.csv', 'w', newline='') as tr_f:
+#     writer = csv.writer(tr_f, delimiter=';')
+#     writer.writerow(('Date', 'Index'))
+#     for d in res['observations']:
+#         print(d['date'], d['value'])
+#         # tr_f.write(d['date'] + ';' + d['value'])
+#         writer.writerow((d['date'], d['value']))
 
