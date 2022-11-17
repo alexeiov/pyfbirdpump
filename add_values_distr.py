@@ -17,9 +17,9 @@ for db_id, asset in data.items(): # 1. определить базовый ин�
         parts_counts = 1
         base_nl = asset[3]
         if asset[4] is not None and asset[4] > 0:
-            base_rl = asset[4]
+            base_ea = asset[4]
         else:
-            base_rl = ''
+            base_ea = ''
         for db_id_2, asset_2 in data.items():
             if base_inv in asset_2[0] and '/' in asset_2[0] and asset_2[1] is not None:
                 sum_gbv += asset_2[1]
@@ -31,11 +31,11 @@ for db_id, asset in data.items(): # 1. определить базовый ин�
             if base_inv in asset_4[0] and parts_counts > 1 and asset_4[1] > 0:
                 # res[db_id_4] = asset_4[1] / sum_gbv * sum_crn
                 # res[db_id_4] = base_nl
-                res[db_id_4] = (asset_4[1] / sum_gbv * sum_crn, base_nl, base_rl)
+                res[db_id_4] = (asset_4[1] / sum_gbv * sum_crn, base_nl, base_ea)
             elif base_inv in asset_4[0] and parts_counts > 1 and asset_4[1] == 0:
-                res[db_id_4] = (asset_4[2], base_nl, base_rl)
+                res[db_id_4] = (asset_4[2], base_nl, base_ea)
             elif base_inv in asset_4[0] and parts_counts == 1:
-                res[db_id_4] = (sum_crn, base_nl, base_rl)
+                res[db_id_4] = (sum_crn, base_nl, base_ea)
 
 file_time = datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')
 
