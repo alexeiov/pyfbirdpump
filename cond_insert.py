@@ -1,6 +1,6 @@
 import traceback
 
-from trends_import import get_av_rub_rates
+from index_operations.trends_import import get_av_rub_rates
 import config
 from connection import db_connect
 import time

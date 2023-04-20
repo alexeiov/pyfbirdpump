@@ -6,8 +6,9 @@ import datetime
 import re
 
 db_name = config.db_addresses['kva_6'][-21:-4]
+export_time = datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')
 # base_filename = '5856_VSMPO_calculation_example_'
-exported_filename = db_name + '_calculation_example_' + datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S') + '.xlsx' #Todo Get DB name from db
+exported_filename = f'{db_name}_calculation_example_{export_time}.xlsx' #Todo Get DB name from db
 save_path = input('Please insert save path: ')
 full_save_path = Path(save_path).joinpath(exported_filename)
 

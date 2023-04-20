@@ -1,9 +1,9 @@
 import csv
+import datetime
 import json
 
 import requests
 from selenium import webdriver
-import time
 from selenium.webdriver.common.keys import Keys
 import xmltodict
 import config
@@ -78,19 +78,36 @@ def get_jap_tools():
     pass
 
 
-rates = get_av_rub_rates('R01235', '01/01/2022', '30/09/2022')
 # print(rates[0])
 # print(rates)
-with open('rates_for_avisma.csv', 'w') as rates_file:
-    for date, rate in rates.items():
-        rates_file.write(f'{date};{rate}\n')
+if __name__ == "__main__":
 
-# res = get_us_fred_trends(config.fred_api_key, config.fred_series_id['ind_bld'], "2022-01-01", "2022-06-30")
-# with open('us_re_trends 6m.csv', 'w', newline='') as tr_f:
-#     writer = csv.writer(tr_f, delimiter=';')
-#     writer.writerow(('Date', 'Index'))
-#     for d in res['observations']:
-#         print(d['date'], d['value'])
-#         # tr_f.write(d['date'] + ';' + d['value'])
-#         writer.writerow((d['date'], d['value']))
+    curr_cbr_code = 'R01235'
+    start_date = '01/01/2020'
+    end_date = '01/01/2023'
 
+    download_time = datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')
+
+    curr_db_code = None
+
+    if curr_cbr_code == 'R01235':
+        curr_db_code = 0
+    else:
+        pass
+
+    # rates = get_av_rub_rates(curr_cbr_code, start_date, end_date)
+    # with open(f'rates_{download_time}_{curr_cbr_code}_{start_date.replace("/", "")}_{end_date.replace("/", "")}.csv', 'w') as rates_file:
+    #     rates_file.write(f'MON_Y;AV_RATE;CURR_ID\n')
+    #     for date, rate in rates.items():
+    #         rates_file.write(f'{date};{rate};{curr_db_code}\n')
+
+    ble_trend_type = 'ind_me'  # choose trend type here (see config for details)
+
+    res = get_us_fred_trends(config.fred_api_key, config.fred_series_id[ble_trend_type], "2020-01-01", "2023-01-01")
+    with open(f'{ble_trend_type}_trends.csv', 'w', newline='') as tr_f:
+        writer = csv.writer(tr_f, delimiter=';')
+        writer.writerow(('Date', 'Index'))
+        for d in res['observations']:
+            print(d['date'], d['value'])
+            # tr_f.write(d['date'] + ';' + d['value'])
+            writer.writerow((d['date'], d['value']))

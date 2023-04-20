@@ -1,6 +1,6 @@
 import fdb
 import time
-import xlsx_import
+from xlsx_operations import xlsx_import
 
 import config
 
