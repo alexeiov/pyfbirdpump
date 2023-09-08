@@ -4,7 +4,7 @@ import datetime
 
 db_code = input('Data base code: ')  # db code: av_9, req number 8
 db = config.db_addresses[db_code]
-num_data_get_req = int(input("Enter data get request number: "))
+num_data_get_req = int(input("Enter data get request number: "))  # req number 8
 req = config.data_get_reqs[num_data_get_req]
 data = from_db_to_data(db, req)
 
@@ -39,6 +39,8 @@ for db_id, asset in data.items(): # 1. определить базовый ин�
 
 file_time = datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')
 
-with open (f'avisma_distr_{file_time}.csv', 'w') as res_file:
+res_file_name = '6089 kva distr'
+
+with open (f'{res_file_name}_{file_time}.csv', 'w') as res_file:
     for key, value in res.items():
         res_file.write(str(key) + ';' + ';'.join(map(str, value)) + '\n')

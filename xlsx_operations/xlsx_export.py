@@ -5,14 +5,21 @@ from connection import db_connect
 import datetime
 import re
 
-db_name = config.db_addresses['kva_6'][-21:-4]
+"""
+Usage
+1. Insert actual DB name in two places (see comments) below
+2. Slice correction for file name may be needed dependant on db path length
+3. Update currency rates in variables declaration section of CALC_EXAMPLE procedure in db
+"""
+
+db_name = config.db_addresses['kva_2021_2022_12'][-17:-4] # Insert DB name manually here and adjust slice too
 export_time = datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')
 # base_filename = '5856_VSMPO_calculation_example_'
 exported_filename = f'{db_name}_calculation_example_{export_time}.xlsx' #Todo Get DB name from db
 save_path = input('Please insert save path: ')
 full_save_path = Path(save_path).joinpath(exported_filename)
 
-db = config.db_addresses['kva_6']
+db = config.db_addresses['kva_2021_2022_12'] # Insert DB name manually here
 
 
 def get_names(req):
