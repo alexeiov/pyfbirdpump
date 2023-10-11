@@ -7,19 +7,20 @@ import re
 
 """
 Usage
-1. Insert actual DB name in two places (see comments) below
+1. Insert actual DB name in two places (see comments) below - Cancelled: db name is taken from user input
 2. Slice correction for file name may be needed dependant on db path length
 3. Update currency rates in variables declaration section of CALC_EXAMPLE procedure in db
 """
 
-db_name = config.db_addresses['kva_2021_2022_12'][-17:-4] # Insert DB name manually here and adjust slice too
+input_db_name = input('Please insert db name: ')
+db_name = config.db_addresses[input_db_name][-17:-4] # Insert DB name manually here and adjust slice too
 export_time = datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')
 # base_filename = '5856_VSMPO_calculation_example_'
 exported_filename = f'{db_name}_calculation_example_{export_time}.xlsx' #Todo Get DB name from db
 save_path = input('Please insert save path: ')
 full_save_path = Path(save_path).joinpath(exported_filename)
 
-db = config.db_addresses['kva_2021_2022_12'] # Insert DB name manually here
+db = config.db_addresses[input_db_name]  # Insert DB name manually here
 
 
 def get_names(req):
@@ -154,7 +155,7 @@ def save_results_to_xlsx(save_p, *res_sets): # Todo accept any number of sheets,
                             wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_GBV}{r_num + 2}  * {P_TREND_COEFF}{r_num + 2}'
                         elif row[2] not in ('0', '1', '2', '3', 'CIP'):
                             if row[14] in ('ru', 'auto_ru') or row[14] in ('Tirus_US', 'Tirus_UK', 'Tirus_GMBH'):
-                                wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_GBV}{r_num + 2}  * {P_TREND_COEFF}{r_num + 2}'
+                                wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_GBV}{r_num + 2} * {P_TREND_COEFF}{r_num + 2}'
                             elif row[14] in ('euro_me', 'eu', 'auto_imp'):
                                 wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_GBV}{r_num + 2}  / {P_PURCHASE_RATE}{r_num + 2} * {P_TREND_COEFF}{r_num + 2} * {P_EURO_CURRENT}{r_num + 2}'
             else:

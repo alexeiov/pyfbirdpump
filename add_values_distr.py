@@ -2,11 +2,12 @@ from data_from_db import from_db_to_data
 import config
 import datetime
 
-db_code = input('Data base code: ')  # db code: av_9, req number 8
+db_code = input('Enter data base code: ')  # db code: av_9, req number 8
 db = config.db_addresses[db_code]
-num_data_get_req = int(input("Enter data get request number: "))  # req number 8
+num_data_get_req = int(input("Enter data get request number: "))  # req number 8 for RE, 9 for ME
 req = config.data_get_reqs[num_data_get_req]
-data = from_db_to_data(db, req)
+kva_div = input('Enter div name: ')  # distribution should be done separately for each company, otherwise collisions due to non-unique invs may occur
+data = from_db_to_data(db, req, kva_div)
 
 res = {}
 for db_id, asset in data.items(): # 1. определить базовый инв. до /. 2. для всех ОС с таким инв и ненулевым CRN просуммировать CRN и GBV. Дальше как сделано
@@ -41,6 +42,7 @@ file_time = datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')
 
 res_file_name = '6089 kva distr'
 
-with open (f'{res_file_name}_{file_time}.csv', 'w') as res_file:
+with open (f'{res_file_name}_{kva_div}_{num_data_get_req}_{db_code}_{file_time}.csv', 'w') as res_file:
+    res_file.write('ID;CRN;N_L;EFF_AGE\n')
     for key, value in res.items():
         res_file.write(str(key) + ';' + ';'.join(map(str, value)) + '\n')

@@ -2,10 +2,10 @@ from connection import db_connect
 import config
 
 
-def from_db_to_data(db: str, request: str):
+def from_db_to_data(db: str, request: str, *params):
     c = db_connect(db)
     cur = c.cursor()
-    cur.execute(request)
+    cur.execute(request, (params))
     data_from_db= {}
     for line in cur.fetchall():
         data_from_db[line[0]] = line[1:]
