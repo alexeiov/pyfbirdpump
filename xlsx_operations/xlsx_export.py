@@ -16,7 +16,7 @@ input_db_name = input('Please insert db name: ')
 db_name = config.db_addresses[input_db_name][-17:-4] # Insert DB name manually here and adjust slice too
 export_time = datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')
 # base_filename = '5856_VSMPO_calculation_example_'
-exported_filename = f'{db_name}_calculation_example_{export_time}.xlsx' #Todo Get DB name from db
+exported_filename = f'{db_name}_calculation_example_{export_time}.xlsx'  # Todo Get DB name from db
 save_path = input('Please insert save path: ')
 full_save_path = Path(save_path).joinpath(exported_filename)
 
@@ -128,39 +128,43 @@ def save_results_to_xlsx(save_p, *res_sets): # Todo accept any number of sheets,
             wb.worksheets[num].cell(1, n_num + 1).value = name
 
         for r_num, row in enumerate(data[1][1]):
-            if not num:
-                for cell_num, cell in enumerate(row):
-                    wb.worksheets[num].cell(r_num + 2, cell_num + 1).value = cell
-                    # CRN_PREV indexation
-                    if row[21] == 'index_prev':
-                        if row[2] in ('0', '1', '2', '3') and (row[14] == 're_ind' or row[14] == 're_m' or row[14] == 'Tirus_US_re' or row[14] == 'Tirus_GMBH_re' or row[14 == 're_apart']): #RE
-                            wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} / {P_IDC_COEFF_PREV}{r_num + 2} * {P_IDC_COEFF}{r_num + 2} * {P_TREND_COEFF}{r_num + 2}'
-                        elif row[2] not in ('0', '1', '2', '3', 'CIP') and (row[14][:2] == 'ru' or row[14] == 'auto_ru' or row[1][:5] == 'Tirus'): # costs in national currencies (ru and Tiruses)
-                            wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} / {P_IDC_COEFF_PREV}{r_num + 2} / {P_DIRECT_COEFF_PREV}{r_num + 2} / {P_INDIRECT_COEFF_PREV}{r_num + 2} * {P_IDC_COEFF}{r_num + 2} * {P_TREND_COEFF}{r_num + 2} * {P_INDIRECT_COEFF}{r_num + 2} * {P_DIRECT_COEFF}{r_num + 2}'
-                        elif row[2] not in ('0', '1', '2', '3', 'CIP') and (row[14][:2] == 'eu' or row[14] == 'auto_imp') and row[1][:5] != 'Tirus': #rus - Euro
-                            wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} / {P_EURO_PREV}{r_num + 2} /{P_IDC_COEFF_PREV}{r_num + 2} / {P_DIRECT_COEFF_PREV}{r_num + 2} / {P_INDIRECT_COEFF_PREV}{r_num + 2} * {P_EURO_CURRENT}{r_num + 2} * {P_IDC_COEFF}{r_num + 2} * {P_TREND_COEFF}{r_num + 2} * {P_INDIRECT_COEFF}{r_num + 2} * {P_DIRECT_COEFF}{r_num + 2}'
-                        elif row[2] not in ('0', '1', '2', '3', 'CIP') and row[14] in ('us_tool', 'jap_tool', 'china') and row[1][:5] != 'Tirus': #rus - USD
-                            wb.worksheets[num].cell(r_num + 2,
-                                                    CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} / {P_USD_PREV}{r_num + 2} /{P_IDC_COEFF_PREV}{r_num + 2} / {P_DIRECT_COEFF_PREV}{r_num + 2} / {P_INDIRECT_COEFF_PREV}{r_num + 2} * {P_USD_CURRENT}{r_num + 2} * {P_IDC_COEFF}{r_num + 2} * {P_TREND_COEFF}{r_num + 2} * {P_INDIRECT_COEFF}{r_num + 2} * {P_DIRECT_COEFF}{r_num + 2}'
-                        elif row[2] == 'CIP':  # CIP
-                            if row[5] is not None: #If no GBV is provided
-                                if row[5] >= 0 and row[23] > 0:
-                                    wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} * {P_TREND_COEFF}{r_num + 2} * {P_GBV}{r_num + 2} / {P_GBV_PREV}{r_num + 2}'
-                            else:
-                                wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} * {P_TREND_COEFF}{r_num + 2}'
+            try:
+                if not num:
+                    for cell_num, cell in enumerate(row):
+                        wb.worksheets[num].cell(r_num + 2, cell_num + 1).value = cell
+                        # CRN_PREV indexation
+                        if row[21] == 'index_prev':
+                            if row[2] in ('0', '1', '2', '3') and (row[14] == 're_ind' or row[14] == 're_m' or row[14] == 'Tirus_US_re' or row[14] == 'Tirus_GMBH_re' or row[14 == 're_apart']): # RE
+                                wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} / {P_IDC_COEFF_PREV}{r_num + 2} * {P_IDC_COEFF}{r_num + 2} * {P_TREND_COEFF}{r_num + 2}'
+                            elif row[2] not in ('0', '1', '2', '3', 'CIP') and (row[14][:2] == 'ru' or row[1][:5] == 'Tirus'): # costs in national currencies (ru and Tiruses)
+                                wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} / {P_IDC_COEFF_PREV}{r_num + 2} / {P_DIRECT_COEFF_PREV}{r_num + 2} / {P_INDIRECT_COEFF_PREV}{r_num + 2} * {P_IDC_COEFF}{r_num + 2} * {P_TREND_COEFF}{r_num + 2} * {P_INDIRECT_COEFF}{r_num + 2} * {P_DIRECT_COEFF}{r_num + 2}'
+                            elif row[2] not in ('0', '1', '2', '3', 'CIP') and (row[14][:2] == 'eu' or row[14] == 'auto_imp') and row[1][:5] != 'Tirus': #rus - Euro
+                                wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} / {P_EURO_PREV}{r_num + 2} /{P_IDC_COEFF_PREV}{r_num + 2} / {P_DIRECT_COEFF_PREV}{r_num + 2} / {P_INDIRECT_COEFF_PREV}{r_num + 2} * {P_EURO_CURRENT}{r_num + 2} * {P_IDC_COEFF}{r_num + 2} * {P_TREND_COEFF}{r_num + 2} * {P_INDIRECT_COEFF}{r_num + 2} * {P_DIRECT_COEFF}{r_num + 2}'
+                            elif row[2] not in ('0', '1', '2', '3', 'CIP') and row[14] in ('us_tool', 'jap_tool', 'china') and row[1][:5] != 'Tirus': #rus - USD
+                                wb.worksheets[num].cell(r_num + 2,
+                                                        CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} / {P_USD_PREV}{r_num + 2} /{P_IDC_COEFF_PREV}{r_num + 2} / {P_DIRECT_COEFF_PREV}{r_num + 2} / {P_INDIRECT_COEFF_PREV}{r_num + 2} * {P_USD_CURRENT}{r_num + 2} * {P_IDC_COEFF}{r_num + 2} * {P_TREND_COEFF}{r_num + 2} * {P_INDIRECT_COEFF}{r_num + 2} * {P_DIRECT_COEFF}{r_num + 2}'
+                            elif row[2] == 'CIP':  # CIP
+                                if row[5] is not None:  # If no GBV is provided
+                                    if row[5] >= 0 and row[23] > 0:
+                                        wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} * {P_TREND_COEFF}{r_num + 2} * {P_GBV}{r_num + 2} / {P_GBV_PREV}{r_num + 2}'
+                                else:
+                                    wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_CRN_PREV}{r_num + 2} * {P_TREND_COEFF}{r_num + 2}'
 
-                    # GBV indexation
-                    elif row[21] == 'index_gbv':
-                        if row[2] in ('0', '1', '2', '3', 'CIP'):
-                            wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_GBV}{r_num + 2}  * {P_TREND_COEFF}{r_num + 2}'
-                        elif row[2] not in ('0', '1', '2', '3', 'CIP'):
-                            if row[14] in ('ru', 'auto_ru') or row[14] in ('Tirus_US', 'Tirus_UK', 'Tirus_GMBH'):
-                                wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_GBV}{r_num + 2} * {P_TREND_COEFF}{r_num + 2}'
-                            elif row[14] in ('euro_me', 'eu', 'auto_imp'):
-                                wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_GBV}{r_num + 2}  / {P_PURCHASE_RATE}{r_num + 2} * {P_TREND_COEFF}{r_num + 2} * {P_EURO_CURRENT}{r_num + 2}'
-            else:
-                for cell_num, cell in enumerate(row):
-                    wb.worksheets[num].cell(r_num + 2, cell_num + 1).value = cell
+                        # GBV indexation
+                        elif row[21] == 'index_gbv':
+                            if row[2] in ('0', '1', '2', '3', 'CIP'):  # RE
+                                wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_GBV}{r_num + 2}  * {P_TREND_COEFF}{r_num + 2}'
+                            elif row[2] not in ('0', '1', '2', '3', 'CIP'):  # ME
+                                if row[14][:2] == 'ru' or row[14] in ('Tirus_US', 'Tirus_UK', 'Tirus_GMBH'):
+                                    wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_GBV}{r_num + 2} * {P_TREND_COEFF}{r_num + 2}'
+                                elif row[14] in ('euro_me', 'eu', 'auto_imp'):
+                                    wb.worksheets[num].cell(r_num + 2, CRN_CALC_C_NUM).value = f'= {P_GBV}{r_num + 2}  / {P_PURCHASE_RATE}{r_num + 2} * {P_TREND_COEFF}{r_num + 2} * {P_EURO_CURRENT}{r_num + 2}'
+                else:
+                    for cell_num, cell in enumerate(row):
+                        wb.worksheets[num].cell(r_num + 2, cell_num + 1).value = cell
+            except Exception as e:
+                wb.worksheets[num].cell(r_num + 2, cell_num + 1).value = cell
+                wb.worksheets[num].cell(r_num + 2, cell_num + 2).value = type(e).__name__
 
     # for n_num, name in enumerate(names_r):
     #     wb.worksheets[0].cell(1, n_num + 1).value = name

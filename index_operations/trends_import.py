@@ -82,9 +82,9 @@ def get_jap_tools():
 # print(rates)
 if __name__ == "__main__":
 
-    curr_cbr_code = 'R01235'
-    start_date = '01/01/2010'
-    end_date = '01/02/2023'
+    curr_cbr_code = 'R01239'
+    start_date = '01/07/2023'
+    end_date = '31/12/2023'
 
     download_time = datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')
 
@@ -98,6 +98,7 @@ if __name__ == "__main__":
         pass
 
     rates = get_av_rub_rates(curr_cbr_code, start_date, end_date)
+
     with open(f'rates_{download_time}_{curr_cbr_code}_{start_date.replace("/", "")}_{end_date.replace("/", "")}.csv', 'w') as rates_file:
         rates_file.write(f'MON_Y;AV_RATE;CURR_ID\n')
         for date, rate in rates.items():
@@ -105,12 +106,12 @@ if __name__ == "__main__":
 
     ble_trend_type = 'china_me'  # choose trend type here (see config for details)
 
-    res = get_us_fred_trends(config.fred_api_key, config.fred_series_id[ble_trend_type], "2010-01-01", "2023-02-01")
-
-    with open(f'{ble_trend_type}_trends.csv', 'w', newline='') as tr_f:
-        writer = csv.writer(tr_f, delimiter=';')
-        writer.writerow(('Date', 'Index'))
-        for d in res['observations']:
-            print(d['date'], d['value'])
-            # tr_f.write(d['date'] + ';' + d['value'])
-            writer.writerow((d['date'], d['value']))
+    # res = get_us_fred_trends(config.fred_api_key, config.fred_series_id[ble_trend_type], "2010-01-01", "2023-02-01")
+    #
+    # with open(f'{ble_trend_type}_trends.csv', 'w', newline='') as tr_f:
+    #     writer = csv.writer(tr_f, delimiter=';')
+    #     writer.writerow(('Date', 'Index'))
+    #     for d in res['observations']:
+    #         print(d['date'], d['value'])
+    #         # tr_f.write(d['date'] + ';' + d['value'])
+    #         writer.writerow((d['date'], d['value']))
