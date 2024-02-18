@@ -40,9 +40,9 @@ for db_id, asset in data.items(): # 1. определить базовый ин�
 
 file_time = datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')
 
-res_file_name = '6089 kva distr'
+res_file_name = '6155 kva distr'
 
 with open (f'{res_file_name}_{kva_div}_{num_data_get_req}_{db_code}_{file_time}.csv', 'w') as res_file:
-    res_file.write('ID;CRN;N_L;EFF_AGE\n')
+    res_file.write('ID;CRN_DISTR;NL_DISTR;EFF_AGE_DISTR\n')
     for key, value in res.items():
         res_file.write(str(key) + ';' + ';'.join(map(str, value)) + '\n')
