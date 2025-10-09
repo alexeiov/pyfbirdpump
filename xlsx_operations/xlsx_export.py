@@ -7,11 +7,11 @@ import re
 
 """
 Usage
-1. Insert actual DB name in two places (see comments) below - Cancelled: db name is taken from user input
+*CANCELLED 1. Insert actual DB name in two places (see comments) below - Cancelled: db name is taken from user input*
 2. Slice correction for file name may be needed dependant on db path length
 3. Update currency rates in variables declaration section of CALC_EXAMPLE procedure in db
+4. call as package: "python -m xlsx_operations.xlsx_export"
 """
-
 input_db_name = input('Please insert db name: ')
 db_name = config.db_addresses[input_db_name][-17:-4] # Insert DB name manually here and adjust slice too
 export_time = datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')

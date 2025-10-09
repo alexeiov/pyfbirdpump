@@ -6,6 +6,9 @@ import requests
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import xmltodict
+import sys
+sys.path.append("T:\YandexDisk\Wrk\Общая информация\Справочная информация\ИТ в оценке\proj\py\pyfbirdpump") # this is needed for from vscode/console. Pycharm did this automatically
+
 import config
 
 # browser = webdriver.Firefox(executable_path=r'T:\\YandexDisk\\Wrk\\Общая информация\\Справочная информация\\ИТ в оценке\\pyfbirdpump\\venv\\Scripts\\geckodriver.exe')
@@ -33,18 +36,18 @@ def get_av_rub_rates(curr, start_date, finish_date):
 
     av_rates = {}
     for rate in rates_l:
-        if str(rate[0][1]) + '_' + str(rate[0][2]) in av_rates:
+        if str(rate[0][2]) + '_' + str(rate[0][1]) in av_rates:
             pass
         else:
-            av_rates[str(rate[0][1]) + '_' + str(rate[0][2])] = ''
-    for mon_y in av_rates.keys():
+            av_rates[str(rate[0][2]) + '_' + str(rate[0][1])] = ''
+    for y_mon in av_rates.keys():
         counts = 0
         summ = 0
         for rate in rates_l:
-            if str(rate[0][1]) + '_' + str(rate[0][2]) == mon_y:
+            if str(rate[0][2]) + '_' + str(rate[0][1]) == y_mon:
                 summ += rate[1]
                 counts += 1
-        av_rates[mon_y] = summ / counts
+        av_rates[y_mon] = summ / counts
     return av_rates
 
 
@@ -65,6 +68,7 @@ def get_us_fred_trends(api_key, ser_id, start_date, end_date):
     Функция для импорта индексов цен производителей промышленного оборудования и промышленных зданий в США
     Документация: https://fred.stlouisfed.org/docs/api/fred/, https://fred.stlouisfed.org/docs/api/fred/category_series.html
     https://fred.stlouisfed.org/docs/api/fred/series.html, https://fred.stlouisfed.org/docs/api/fred/series_observations.html
+
     """
 
     # url_s = f"https://api.stlouisfed.org/fred/series?series_id={ser_id}&api_key={api_key}&realtime_start={start_date}&realtime_end={end_date}&file_type=json"
@@ -82,9 +86,9 @@ def get_jap_tools():
 # print(rates)
 if __name__ == "__main__":
 
-    curr_cbr_code = 'R01239'
-    start_date = '01/07/2023'
-    end_date = '31/12/2023'
+    curr_cbr_code = 'R01235'
+    start_date = '01/01/2009'
+    end_date = '01/10/2025'
 
     download_time = datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')
 
@@ -100,18 +104,18 @@ if __name__ == "__main__":
     rates = get_av_rub_rates(curr_cbr_code, start_date, end_date)
 
     with open(f'rates_{download_time}_{curr_cbr_code}_{start_date.replace("/", "")}_{end_date.replace("/", "")}.csv', 'w') as rates_file:
-        rates_file.write(f'MON_Y;AV_RATE;CURR_ID\n')
+        rates_file.write(f'Y_MON;AV_RATE;CURR_ID\n')
         for date, rate in rates.items():
             rates_file.write(f'{date};{rate};{curr_db_code}\n')
 
-    ble_trend_type = 'china_me'  # choose trend type here (see config for details)
+    ble_trend_type = 'ind_me'  # choose trend type here (see config for details)
 
-    # res = get_us_fred_trends(config.fred_api_key, config.fred_series_id[ble_trend_type], "2010-01-01", "2023-02-01")
-    #
-    # with open(f'{ble_trend_type}_trends.csv', 'w', newline='') as tr_f:
-    #     writer = csv.writer(tr_f, delimiter=';')
-    #     writer.writerow(('Date', 'Index'))
-    #     for d in res['observations']:
-    #         print(d['date'], d['value'])
-    #         # tr_f.write(d['date'] + ';' + d['value'])
-    #         writer.writerow((d['date'], d['value']))
+    res = get_us_fred_trends(config.fred_api_key, config.fred_series_id[ble_trend_type], "2009-01-01", "2025-08-01")  # year-month-day
+
+    with open(f'{ble_trend_type}_trends.csv', 'w', newline='') as tr_f:
+        writer = csv.writer(tr_f, delimiter=';')
+        writer.writerow(('Date', 'Index'))
+        for d in res['observations']:
+            print(d['date'], d['value'])
+            # tr_f.write(d['date'] + ';' + d['value'])
+            writer.writerow((d['date'], d['value']))
